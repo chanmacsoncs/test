@@ -55,7 +55,7 @@ repeat task.wait() until game:IsLoaded()
                         sendNotif()
                         return true
                     end
-                    queue_on_teleport("_G.Max=" .. _G.Max .. ";_G.Min=" .. _G.Min .. ";" .. game:HttpGet("https://e-z.tools/p/raw/qa6az4va4w"))
+                    queue_on_teleport("_G.Max=" .. _G.Max .. ";_G.Min=" .. _G.Min .. ";" .. game:HttpGet("https://raw.githubusercontent.com/chanmacsoncs/test/refs/heads/main/main.lua"))
                     teleportService:TeleportToPlaceInstance(placeID, serverID, game.Players.LocalPlayer)
                 end)
                 if hopSuccess then
