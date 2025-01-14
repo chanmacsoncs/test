@@ -6,6 +6,9 @@ repeat task.wait() until game:IsLoaded()
     local placeID = game.PlaceId
     local teleportService = game:GetService("TeleportService")
     local Found = false
+
+    _G.Min = _G.Min or 1
+    _G.Max = _G.Max or 10
     
     local function checkLevel(str)
         print(str)
