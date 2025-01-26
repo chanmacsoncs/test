@@ -89,7 +89,17 @@ end
 
 local function buyPinata()
     for i, name in ipairs(_G.List) do
-        print(name)
+        local Booths = game:GetService("Workspace")["__THINGS"].Booths
+        for _, Booth in ipairs(Booths:GetChildren()) do
+            local PetScroll = Booth.Pets["BoothTop"]["PetScroll"]
+            for _, Frame in ipairs(PetScroll:GetChildren()) do
+                if Frame:IsA("Frame") then
+                    if Frame.Name == name then
+                        game.Players.LocalPlayer.Character.HumanoidRootPart:PivotTo(Booth:GetPivot())
+                    end
+                end
+            end
+        end
     end
 end
 
