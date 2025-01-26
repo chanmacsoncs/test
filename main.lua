@@ -87,8 +87,8 @@ local function hop()
     end
 end
 
-local function purchase()
-    local args = {2450215349, {["33ad6b0221e04cc5911aeed9aa831d07"] = 11}}
+local function purchase(PlayerID, ItemID, Count)
+    local args = {PlayerID, {[ItemID] = Count}}
     game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Booths_RequestPurchase"):InvokeServer(unpack(args))
 end
 
@@ -100,7 +100,9 @@ local function buyPinata()
             for _, Frame in ipairs(PetScroll:GetChildren()) do
                 if Frame:IsA("Frame") then
                     if Frame.Name == name then
-                        
+                        local ItemID = name;
+                        local PlayerID = string.gsub(Booth.Info.BoothBottom.Frame.Top.Text, "'s Booth", "")
+                        print(PlayerID)
                     end
                 end
             end
