@@ -7,86 +7,28 @@ repeat task.wait() until game:IsLoaded()
     local teleportService = game:GetService("TeleportService")
     local Found = false
 
-    local function checkForPinata()
-        for _, child in ipairs(game:GetService("Workspace").Monsters:GetChildren()) do
-            if string.find(child.Name, "Vicious Bee") then
-                if checkLevel(child.Name) then
-                    Found = true
-                    return true
-                end
-            end
-        end
-        return false
-    end
 
-    local function sendNotif()
-        game.StarterGui:SetCore("SendNotification", {
-            Title = "Pinata Hopper",
-            Text = "Pinata Has Been Found!",
-            Duration = 30
-        })
-    end
-    
-    local function hop()
-        local success, site = pcall(function()
-            return httpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/' .. placeID .. '/servers/Public?sortOrder=Asc&limit=100'))
-        end)
-        
-        if not success or not site or not site.data then
-            return
-        end
-        
-        for _, serverData in pairs(site.data) do
-            if serverData.maxPlayers > serverData.playing then
-                local serverID = tostring(serverData.id)
-                local hopSuccess, _ = pcall(function()
-                    if Found then
-                        sendNotif()
-                        return true
-                    end
-                    queue_on_teleport("_G.Max=" .. _G.Max .. ";_G.Min=" .. _G.Min .. ";" .. game:HttpGet("https://raw.githubusercontent.com/chanmacsoncs/test/refs/heads/main/main.lua"))
-                    teleportService:TeleportToPlaceInstance(placeID, serverID, game.Players.LocalPlayer)
-                end)
-                if hopSuccess then
-                    break
-                end
-            end
-        end
-    end
-    
-    game:GetService("Workspace").Monsters.ChildAdded:Connect(function(child)
-        if string.find(child.Name, "Vicious Bee") then
-            if checkLevel(child.Name) then
-                Found = true
-            end
-        end
-    end)
-    
-    if not checkForPinata() then
-        hop()
-    else
-        sendNotif()
-    end
 
-List = {};
+_G.List = {}
 local values = {
-    ["k"] = 1000;
-    ["m"] = 1000000;
-    ["b"] = 1000000000;
-    ["t"] = 1000000000000;
-    -- and so on... you can fill the rest in if you need to
-};
+    ["k"] = 1000,
+    ["m"] = 1000000,
+    ["b"] = 1000000000,
+    ["t"] = 1000000000000,
+    -- Add more abbreviations as needed
+}
+
 local function AbrToNum(str)
-    local num, abr = str:match("^([%d.]+)(%a)$"); -- here we get the number and abbrevation from a string (case doesn't matter)
-    if num and abr then -- check if the string format is correct so nothing breaks
-        local val = values[abr]; -- get the value from 'values' table
+    local num, abr = str:match("^([%d.]+)(%a)$") -- Extract number and abbreviation
+    if num and abr then
+        local val = values[abr:lower()] -- Support case-insensitive abbreviations
         if val then
-            return val * tonumber(num); -- if it exists then multiply number by value and return it
+            return val * tonumber(num)
         end
-    else
-        error("Invalid abbreviation");
     end
+    return nil -- Return nil for invalid abbreviations
 end
+
 local function checkForPinata()
     local Booths = game:GetService("Workspace")["__THINGS"].Booths
     for _, Booth in ipairs(Booths:GetChildren()) do
@@ -95,12 +37,14 @@ local function checkForPinata()
             if Frame:IsA("Frame") then
                 local Icon = Frame.Holder.ItemSlot.Icon
                 if Icon.Image == "rbxassetid://15938616489" then
-                    print("Image Done!")
+                    print("Image Found!")
                     local Price = Frame.Buy.Cost.Text
-                    print(Price)
-                    print(List)
-                    if AbrToNum(Price) < 31000 then
-                        List.insert(Frame.Name)
+                    print("Price:", Price)
+
+                    local numericPrice = AbrToNum(Price)
+                    if numericPrice and numericPrice < 31000 then
+                        _G.List[#_G.List + 1] = Frame.Name -- Add the frame name to the list
+                        Found = true
                     end
                 end
             end
@@ -108,7 +52,51 @@ local function checkForPinata()
     end
 end
 
+local function sendNotif()
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "Pinata Hopper",
+        Text = "Pinata Has Been Found!",
+        Duration = 30
+    })
+end
+
+local function hop()
+    local success, site = pcall(function()
+        return httpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/' .. placeID .. '/servers/Public?sortOrder=Asc&limit=100'))
+    end)
+    
+    if not success or not site or not site.data then
+        return
+    end
+    
+    for _, serverData in pairs(site.data) do
+        if serverData.maxPlayers > serverData.playing then
+            local serverID = tostring(serverData.id)
+            local hopSuccess, _ = pcall(function()
+                if Found then
+                    sendNotif()
+                    return true
+                end
+                queue_on_teleport(game:HttpGet("https://raw.githubusercontent.com/chanmacsoncs/test/refs/heads/main/main.lua"))
+                teleportService:TeleportToPlaceInstance(placeID, serverID, game.Players.LocalPlayer)
+            end)
+            if hopSuccess then
+                break
+            end
+        end
+    end
+end
+
+local function buyPinata()
+    for i, name in ipairs(_G.List) do
+        print(name)
+    end
+end
+
 checkForPinata()
-for i = 0, 3 do
-   print(List[i])
+if Found == false then
+    hop()
+else
+    sendNotif()
+    buyPinata()
 end
