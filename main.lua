@@ -70,7 +70,7 @@ local function hop()
     end
     
     for _, serverData in pairs(site.data) do
-        if serverData.maxPlayers > serverData.playing then
+        if serverData.maxPlayers > serverData.playing + 5 then
             local serverID = tostring(serverData.id)
             local hopSuccess, _ = pcall(function()
                 if Found then
