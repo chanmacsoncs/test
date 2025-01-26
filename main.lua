@@ -76,7 +76,7 @@ local function hopServers()
     end
 
     for _, serverData in pairs(site.data) do
-        if serverData.playing < 25 then
+        if serverData.playing < 28 then
             local serverID = tostring(serverData.id)
             local hopSuccess, _ = pcall(function()
                 if found then
