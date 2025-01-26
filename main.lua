@@ -69,7 +69,7 @@ local function hop()
         return
     end
     
-    for _, serverData in pairs(site.data) do
+    local serverData = site.data[math.random(#site.data)] do
         if serverData.playing < 34 then
             local serverID = tostring(serverData.id)
             local hopSuccess, _ = pcall(function()
