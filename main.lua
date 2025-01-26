@@ -29,7 +29,7 @@ local function AbrToNum(str)
     return nil -- Return nil for invalid abbreviations
 end
 
-local function checkForPinata
+local function checkForPinata()
     print("checkForPinata Function Called")
     local Booths = game:GetService("Workspace")["__THINGS"].Booths
     for _, Booth in ipairs(Booths:GetChildren()) do
