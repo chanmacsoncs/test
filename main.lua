@@ -52,10 +52,10 @@ local function checkForPinata()
     end
 end
 
-local function sendNotif()
+local function sendNotif(text)
     game.StarterGui:SetCore("SendNotification", {
         Title = "Pinata Hopper",
-        Text = "Pinata Has Been Found!",
+        Text = text,
         Duration = 30
     })
 end
@@ -102,7 +102,7 @@ local function buyPinata()
                     if Frame.Name == name then
                         local ItemID = name;
                         local PlayerID = string.gsub(Booth.Info.BoothBottom.Frame.Top.Text, "'s Booth", "")
-                        print(PlayerID)
+                        sendNotif(PlayerID)
                     end
                 end
             end
