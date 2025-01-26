@@ -98,8 +98,11 @@ local function buyPinata()
                 if Frame:IsA("Frame") then
                     if Frame.Name == name then
                         local ItemID = name;
-                        local PlayerID = string.gsub(Booth.Info.BoothBottom.Frame.Top.Text, "'s Booth", "")
-                        sendNotif(PlayerID)
+                        local PlayerID = function()
+                            for _, Player in ipairs(game.Players:GetPlayers()) do
+                                print(Player.Name)
+                            end
+                        end
                     end
                 end
             end
@@ -111,6 +114,5 @@ checkForPinata()
 if Found == false then
     hop()
 else
-    sendNotif()
     buyPinata()
 end
