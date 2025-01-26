@@ -30,7 +30,7 @@ local function AbrToNum(str)
 end
 
 local function checkForPinata
-    print("checkForPinata() Function Called")
+    print("checkForPinata Function Called")
     local Booths = game:GetService("Workspace")["__THINGS"].Booths
     for _, Booth in ipairs(Booths:GetChildren()) do
         local PetScroll = Booth.Pets["BoothTop"]["PetScroll"]
@@ -54,7 +54,7 @@ local function checkForPinata
 end
 
 local function hop()
-    print("hop() Function Called")
+    print("hop Function Called")
     local success, site = pcall(function()
         return httpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/' .. placeID .. '/servers/Public?&limit=100&excludeFullGames=true'))
     end)
@@ -84,7 +84,7 @@ end
 
 
 local function buyPinata()
-    print("buyPinata() Function Called")
+    print("buyPinata Function Called")
     for i, name in ipairs(_G.List) do
         local Booths = game:GetService("Workspace")["__THINGS"].Booths
         for _, Booth in ipairs(Booths:GetChildren()) do
