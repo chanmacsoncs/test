@@ -110,4 +110,4 @@ repeat
         buyPinata()
     end
     task.wait(1)
-end
+until false
