@@ -102,9 +102,12 @@ local function buyPinata()
     end
 end
 
-checkForPinata()
-if Found == false then
-    hop()
-else
-    buyPinata()
+repeat
+    checkForPinata()
+    if Found == false then
+        hop()
+    else
+        buyPinata()
+    end
+    task.wait(1)
 end
