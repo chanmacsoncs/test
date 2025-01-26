@@ -1,63 +1,50 @@
 repeat task.wait() until game:IsLoaded()
-print("Game Loaded")
+    print("Loaded")
+    
+    local httpService = game:GetService("HttpService")
+    
+    local placeID = game.PlaceId
+    local teleportService = game:GetService("TeleportService")
+    local Found = false
 
-local httpService = game:GetService("HttpService")
-local teleportService = game:GetService("TeleportService")
-local starterGui = game:GetService("StarterGui")
-local placeID = game.PlaceId
-local found = false
-local pinataImageID = "rbxassetid://15938616489"
-local maxPrice = 31000
 
--- Global list for storing valid frames
+
 _G.List = {}
-
--- Abbreviation-to-number mapping
 local values = {
-    k = 1000,
-    m = 1000000,
-    b = 1000000000,
-    t = 1000000000000,
+    ["k"] = 1000,
+    ["m"] = 1000000,
+    ["b"] = 1000000000,
+    ["t"] = 1000000000000,
+    -- Add more abbreviations as needed
 }
 
--- Converts abbreviations (e.g., "10k") to numerical values
-local function abrToNum(str)
-    local num, abr = str:match("^([%d.]+)(%a)$")
+local function AbrToNum(str)
+    local num, abr = str:match("^([%d.]+)(%a)$") -- Extract number and abbreviation
     if num and abr then
-        local multiplier = values[abr:lower()]
-        if multiplier then
-            return multiplier * tonumber(num)
+        local val = values[abr:lower()] -- Support case-insensitive abbreviations
+        if val then
+            return val * tonumber(num)
         end
     end
-    return nil
+    return nil -- Return nil for invalid abbreviations
 end
 
--- Sends a notification to the player
-local function sendNotification(text)
-    starterGui:SetCore("SendNotification", {
-        Title = "Pinata Hopper",
-        Text = text,
-        Duration = 30
-    })
-end
-
--- Checks for Pinata items in booths
 local function checkForPinata()
-    local booths = game:GetService("Workspace")["__THINGS"].Booths
-    for _, booth in ipairs(booths:GetChildren()) do
-        local petScroll = booth.Pets["BoothTop"]["PetScroll"]
-        for _, frame in ipairs(petScroll:GetChildren()) do
-            if frame:IsA("Frame") then
-                local icon = frame.Holder.ItemSlot.Icon
-                if icon.Image == pinataImageID then
-                    print("Pinata Found!")
-                    local priceText = frame.Buy.Cost.Text
-                    print("Price:", priceText)
+    local Booths = game:GetService("Workspace")["__THINGS"].Booths
+    for _, Booth in ipairs(Booths:GetChildren()) do
+        local PetScroll = Booth.Pets["BoothTop"]["PetScroll"]
+        for _, Frame in ipairs(PetScroll:GetChildren()) do
+            if Frame:IsA("Frame") then
+                local Icon = Frame.Holder.ItemSlot.Icon
+                if Icon.Image == "rbxassetid://15938616489" then
+                    print("Image Found!")
+                    local Price = Frame.Buy.Cost.Text
+                    print("Price:", Price)
 
-                    local numericPrice = abrToNum(priceText)
-                    if numericPrice and numericPrice < maxPrice then
-                        table.insert(_G.List, frame.Name) -- Add frame name to list
-                        found = true
+                    local numericPrice = AbrToNum(Price)
+                    if numericPrice and numericPrice < 31000 then
+                        _G.List[#_G.List + 1] = Frame.Name -- Add the frame name to the list
+                        Found = true
                     end
                 end
             end
@@ -65,51 +52,64 @@ local function checkForPinata()
     end
 end
 
--- Hops between servers to find the item
-local function hopServers()
-    local success, site = pcall(function()
-        return httpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/' .. placeID .. '/servers/Public?limit=100&excludeFullGames=true'))
-    end)
+local function sendNotif(text)
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "Pinata Hopper",
+        Text = text,
+        Duration = 30
+    })
+end
 
+local function hop()
+    local success, site = pcall(function()
+        return httpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/' .. placeID .. '/servers/Public?&limit=100&excludeFullGames=true'))
+    end)
+    
     if not success or not site or not site.data then
         return
     end
-
+    
     for _, serverData in pairs(site.data) do
-        if serverData.playing < 28 then
+        if serverData.playing < 29 then
             local serverID = tostring(serverData.id)
             local hopSuccess, _ = pcall(function()
-                if found then
-                    sendNotification("Pinata Found! Staying on this server.")
+                if Found then
+                    sendNotif()
                     return true
                 end
+                queue_on_teleport(game:HttpGet("https://raw.githubusercontent.com/chanmacsoncs/test/refs/heads/main/main.lua"))
                 teleportService:TeleportToPlaceInstance(placeID, serverID, game.Players.LocalPlayer)
             end)
-            if hopSuccess then break end
+            if hopSuccess then
+                break
+            end
         end
     end
 end
 
--- Buys the Pinata from the stored frames
+
+
 local function buyPinata()
-    local booths = game:GetService("Workspace")["__THINGS"].Booths
-    for _, name in ipairs(_G.List) do
-        for _, booth in ipairs(booths:GetChildren()) do
-            local petScroll = booth.Pets["BoothTop"]["PetScroll"]
-            for _, frame in ipairs(petScroll:GetChildren()) do
-                if frame:IsA("Frame") and frame.Name == name then
-                    print("Attempting to purchase Pinata:", name)
-                    -- Add your buying logic here
+    for i, name in ipairs(_G.List) do
+        local Booths = game:GetService("Workspace")["__THINGS"].Booths
+        for _, Booth in ipairs(Booths:GetChildren()) do
+            local PetScroll = Booth.Pets["BoothTop"]["PetScroll"]
+            for _, Frame in ipairs(PetScroll:GetChildren()) do
+                if Frame:IsA("Frame") then
+                    if Frame.Name == name then
+                        local ItemID = name;
+                        local PlayerID = string.gsub(Booth.Info.BoothBottom.Frame.Top.Text, "'s Booth", "")
+                        sendNotif(PlayerID)
+                    end
                 end
             end
         end
     end
 end
 
--- Main script logic
 checkForPinata()
-if not found then
-    hopServers()
+if Found == false then
+    hop()
 else
     buyPinata()
 end
