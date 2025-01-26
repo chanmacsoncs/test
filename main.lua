@@ -87,10 +87,7 @@ local function hop()
     end
 end
 
-local function purchase(PlayerID, ItemID, Count)
-    local args = {PlayerID, {[ItemID] = Count}}
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Booths_RequestPurchase"):InvokeServer(unpack(args))
-end
+
 
 local function buyPinata()
     for i, name in ipairs(_G.List) do
