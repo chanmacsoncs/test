@@ -87,6 +87,11 @@ local function hop()
     end
 end
 
+local function purchase()
+    local args = {2450215349, {["33ad6b0221e04cc5911aeed9aa831d07"] = 11}}
+    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Booths_RequestPurchase"):InvokeServer(unpack(args))
+end
+
 local function buyPinata()
     for i, name in ipairs(_G.List) do
         local Booths = game:GetService("Workspace")["__THINGS"].Booths
@@ -95,7 +100,7 @@ local function buyPinata()
             for _, Frame in ipairs(PetScroll:GetChildren()) do
                 if Frame:IsA("Frame") then
                     if Frame.Name == name then
-                        game.Players.LocalPlayer.Character.HumanoidRootPart:PivotTo(Booth:GetPivot())
+                        
                     end
                 end
             end
