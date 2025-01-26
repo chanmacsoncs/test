@@ -70,7 +70,7 @@ local function hop()
     end
     
     for _, serverData in pairs(site.data) do
-        if serverData.playing < 29 then
+        if serverData.playing < 34 then
             local serverID = tostring(serverData.id)
             local hopSuccess, _ = pcall(function()
                 if Found then
@@ -80,8 +80,8 @@ local function hop()
                 queue_on_teleport(game:HttpGet("https://raw.githubusercontent.com/chanmacsoncs/test/refs/heads/main/main.lua"))
                 teleportService:TeleportToPlaceInstance(placeID, serverID, game.Players.LocalPlayer)
             end)
-            if hopSuccess then
-                break
+            if not hopSuccess then
+                hop()
             end
         end
     end
