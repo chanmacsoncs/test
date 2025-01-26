@@ -29,7 +29,8 @@ local function AbrToNum(str)
     return nil -- Return nil for invalid abbreviations
 end
 
-local function checkForPinata()
+local function checkForPinata
+    print("checkForPinata() Function Called")
     local Booths = game:GetService("Workspace")["__THINGS"].Booths
     for _, Booth in ipairs(Booths:GetChildren()) do
         local PetScroll = Booth.Pets["BoothTop"]["PetScroll"]
@@ -52,15 +53,8 @@ local function checkForPinata()
     end
 end
 
-local function sendNotif(text)
-    game.StarterGui:SetCore("SendNotification", {
-        Title = "Pinata Hopper",
-        Text = text,
-        Duration = 30
-    })
-end
-
 local function hop()
+    print("hop() Function Called")
     local success, site = pcall(function()
         return httpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/' .. placeID .. '/servers/Public?&limit=100&excludeFullGames=true'))
     end)
@@ -90,6 +84,7 @@ end
 
 
 local function buyPinata()
+    print("buyPinata() Function Called")
     for i, name in ipairs(_G.List) do
         local Booths = game:GetService("Workspace")["__THINGS"].Booths
         for _, Booth in ipairs(Booths:GetChildren()) do
