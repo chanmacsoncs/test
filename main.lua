@@ -62,7 +62,7 @@ end
 
 local function hop()
     local success, site = pcall(function()
-        return httpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/' .. placeID .. '/servers/Public?sortOrder=Asc&limit=100'))
+        return httpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/' .. placeID .. '/servers/Public?&limit=100&excludeFullGames=true'))
     end)
     
     if not success or not site or not site.data then
