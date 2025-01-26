@@ -7,22 +7,7 @@ repeat task.wait() until game:IsLoaded()
     local teleportService = game:GetService("TeleportService")
     local Found = false
 
-    _G.Min = _G.Min or 1
-    _G.Max = _G.Max or 10
-    
-    local function checkLevel(str)
-        print(str)
-        local level = tonumber(str:match("%d+"))
-        if level >= _G.Min and level <= _G.Max then
-            game.StarterGui:SetCore("SendNotification", {
-                Title = "Level " .. level,
-                Text = "",
-                Duration = 30
-            })
-            return true
-        end
-    end
-    local function checkForViciousBee()
+    local function checkForPinata()
         for _, child in ipairs(game:GetService("Workspace").Monsters:GetChildren()) do
             if string.find(child.Name, "Vicious Bee") then
                 if checkLevel(child.Name) then
@@ -33,10 +18,11 @@ repeat task.wait() until game:IsLoaded()
         end
         return false
     end
+
     local function sendNotif()
         game.StarterGui:SetCore("SendNotification", {
-            Title = "Vicious Bee Hopper",
-            Text = "Vicious Bee Has Been Found!",
+            Title = "Pinata Hopper",
+            Text = "Pinata Has Been Found!",
             Duration = 30
         })
     end
@@ -75,28 +61,54 @@ repeat task.wait() until game:IsLoaded()
             end
         end
     end)
-
-    local function tween() 
-        local player = game.Players.LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
-        local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-        local tweenService = game:GetService("TweenService")
-        
-        local goal = {
-            Position = Vector3.new(position.X, position.Y + 20, position.Z)
-        }
-        local tweenInfo = TweenInfo.new(.3, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
-        local tween = tweenService:Create(humanoidRootPart, tweenInfo, goal)
-        tween:Play()
-        tween.Completed:Wait()
-    end
     
-    if not checkForViciousBee() then
+    if not checkForPinata() then
         hop()
     else
         sendNotif()
-        repeat
-            tween()
-        until not checkForViciousBee
-        hop()
     end
+
+List = {};
+local values = {
+    ["k"] = 1000;
+    ["m"] = 1000000;
+    ["b"] = 1000000000;
+    ["t"] = 1000000000000;
+    -- and so on... you can fill the rest in if you need to
+};
+local function AbrToNum(str)
+    local num, abr = str:match("^([%d.]+)(%a)$"); -- here we get the number and abbrevation from a string (case doesn't matter)
+    if num and abr then -- check if the string format is correct so nothing breaks
+        local val = values[abr]; -- get the value from 'values' table
+        if val then
+            return val * tonumber(num); -- if it exists then multiply number by value and return it
+        end
+    else
+        error("Invalid abbreviation");
+    end
+end
+local function checkForPinata()
+    local Booths = game:GetService("Workspace")["__THINGS"].Booths
+    for _, Booth in ipairs(Booths:GetChildren()) do
+        local PetScroll = Booth.Pets["BoothTop"]["PetScroll"]
+        for _, Frame in ipairs(PetScroll:GetChildren()) do
+            if Frame:IsA("Frame") then
+                local Icon = Frame.Holder.ItemSlot.Icon
+                if Icon.Image == "rbxassetid://15938616489" then
+                    print("Image Done!")
+                    local Price = Frame.Buy.Cost.Text
+                    print(Price)
+                    print(List)
+                    if AbrToNum(Price) < 31000 then
+                        List.insert(Frame.Name)
+                    end
+                end
+            end
+        end
+    end
+end
+
+checkForPinata()
+for i = 0, 3 do
+   print(List[i])
+end
