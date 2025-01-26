@@ -1,4 +1,5 @@
 repeat task.wait() until game:IsLoaded()
+    task.wait(5)
     print("Loaded")
     
     local httpService = game:GetService("HttpService")
